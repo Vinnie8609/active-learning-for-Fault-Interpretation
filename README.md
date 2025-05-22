@@ -3,3 +3,8 @@ This project is the code for paper URAL: Uncertainty-driven Region-based Active 
 # Requirements
 The main package and version of the python environment are as follows
 The above environment is successful when running the code of the project. Pytorch has very good compatibility. Thus, I suggest that try to use the existing pytorch environment firstly.
+
+# Usage
+## 1) Download Project
+Runninggit clone https://github.com/Vinnie8609/active-learning-for-Fault-Interpretation.git
+The project structure and intention are as follows :
