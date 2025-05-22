@@ -41,5 +41,8 @@ Please confirm the configuration information in the [utils.py]
       --n_round 34 \
       --dataset_name THEBE \
       --strategy_name EntropySampling \
-     
 
+
+```
+## 4)Pediction and Visualization
+you can run model_predict_thebe to predict and visualize the whole process
