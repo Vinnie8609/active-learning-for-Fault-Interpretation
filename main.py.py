@@ -11,7 +11,6 @@ from model_predict_thebe import model_predict
 parser = argparse.ArgumentParser()
 parser.add_argument('--seed', type=int, default=456, help="random seed")    #111111111
 parser.add_argument('--picknum', type=int, default=50, help="random seed")  
-parser.add_argument('--picknum_no', type=int, default=20, help="random seed")  
 parser.add_argument('--otherchoice', type=str, default="transunt_3", help="number of round pick samples")    #30pices
 parser.add_argument('--n_init_labeled', type=int, default=348, help="number of init labeled samples")
 parser.add_argument('--n_query', type=int, default=50, help="number of queries per round")
