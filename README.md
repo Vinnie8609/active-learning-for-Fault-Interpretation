@@ -6,5 +6,5 @@ The above environment is successful when running the code of the project. Pytorc
 
 # Usage
 ## 1) Download Project
-Runninggit clone https://github.com/Vinnie8609/active-learning-for-Fault-Interpretation.git
+Running git clone https://github.com/Vinnie8609/active-learning-for-Fault-Interpretation.git
 The project structure and intention are as follows :
