@@ -22,4 +22,24 @@ The above environment is successful when running the code of the project. Pytorc
 # Usage
 ## 1) Download Project
 Running git clone https://github.com/Vinnie8609/active-learning-for-Fault-Interpretation.git
-The project structure and intention are as follows :
+
+## 2) Datasets preparation
+1.Download the datasets from the official address:
+https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi: 
+10.7910/DVN/YBYGBK
+2.Modify the data folder path for specific dataset in data.py
+
+## 3)Run Active learning process
+Please confirm the configuration information in the [utils.py]
+```bash
+  python main.py \
+      --seed 123 \
+      --picknum 50 \
+      --otherchoice transunet \
+      --n_init_labeled 100 \
+      --n_query 20 \
+      --n_round 34 \
+      --dataset_name THEBE \
+      --strategy_name EntropySampling \
+     
+
