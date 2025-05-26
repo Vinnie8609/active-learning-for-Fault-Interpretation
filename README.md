@@ -25,8 +25,7 @@ Running git clone https://github.com/Vinnie8609/active-learning-for-Fault-Interp
 
 ## 2) Datasets preparation
 1.Download the datasets from the official address:
-https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi: 
-10.7910/DVN/YBYGBK
+https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/YBYGBK
 
 2.Modify the data folder path for specific dataset in data.py
 
