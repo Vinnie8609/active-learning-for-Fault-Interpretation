@@ -82,52 +82,110 @@ class Data:
 
 
 def get_THEBE(handler):
-    train_imgs_first=np.load("./data/trainimg82.npy") # 348*128*128
+
+    img=np.load("./data/seistrain.npy")
+    mask=np.load("./data/faulttrain.npy")
+    num_frames = train_images.shape[0]
+    selected_indices = np.random.choice(num_frames, size=25, replace=False)
+    selected_images = img[selected_indices]
+    selected_masks = mask[selected_indices]
+    label_img= selected_images [:10,100:2148,700:1212]
+    unlabel_img= selected_images [10:,100:2148,700:1212]
+    label_mask= selected_masks [:10,100:2148,700:1212]
+    unlabel_mask= selected_masks [10:,100:2148,700:1212]
+    
+    trainimg=np.zeros([180,224,224)]
+    trainmask=np.zeros([180,224,224)]
+    id=0
+    for k in range(10):
+        for i in range (9):
+            for j in range(2):
+                img1=label_img[k,i*224:i*224+224,j*224:j*224+224]
+                mask1=label_mask[k,i*224:i*224+224,j*224:j*224+224]
+                if mask1.sum!=0:
+                    trainimg[id]=img1
+                    trainmask[id]=mask1
+                    id+=1
+    trainimg=trainimg[:id]
+    trainmask=trainmask[:id]
+
+    np.save("./data/trainimg.npy",trainimg)
+    np.save("./data/trainmask.npy",trainmask)
+    np.save("./data/trainimg_unlabel",unlabel_img)
+    np.save("./data/trainmask_unlabel",unlabel_mask)
+    
+    train_imgs_first=np.load("./data/trainimg.npy") # 348*128*128
    
     train_imgs_first=torch.tensor(train_imgs_first)
     
-    train_masks_first=np.load("./data/trainmask82.npy")
+    train_masks_first=np.load("./data/trainmask.npy")
    
     train_masks_first=torch.tensor(train_masks_first)
     
     
     
-    train_imgs_middle=np.load("./data/THEBE224/val_img.npy")
+    train_imgs_middle=np.load("./data/trainimg_unlabel.npy")
     train_imgs_middle=torch.tensor(train_imgs_middle)
     
     
-    train_masks_middle=np.load("./data/THEBE224/val_mask.npy")  
+    train_masks_middle=np.load("./data/trainmask_unlabel.npy")  
     train_masks_middle=torch.tensor(train_masks_middle)
 
-
-
+    trainimg_small=np.zeros([50,224,224])
+    trainmask_small=np.zeros([50,224,224])
+    np.save("./data/trainimg_small.npy",trainimg_small)
+    np.save("./data/trainmask_small.npy",trainmask_small)
    
-    train_imgs_small=np.load("./data/THEBE224/val_img.npy")
+    train_imgs_small=np.load("./data/trainimg_small.npy")
     train_imgs_small=torch.tensor(train_imgs_small)
-    
-    
 
-    train_masks_small=np.load("./data/THEBE224/val_mask.npy")
+    train_masks_small=np.load("./data//trainmask_small.npy")
     train_masks_small=torch.tensor(train_masks_small)
 
+    img=np.load("./data/seisval.npy")
+    mask=np.load("./data/faultval.npy")
+    num_frames = train_images.shape[0]
+    selected_indices = np.random.choice(num_frames, size=10, replace=False)
+    selected_images = img[selected_indices]
+    selected_masks = mask[selected_indices]
+    label_img= selected_images [:,100:2148,700:1212]
+    label_mask= selected_masks [:,100:2148,700:1212]
+    
+    
+    valimg=np.zeros([180,224,224)]
+    valmask=np.zeros([180,224,224)]
+    id=0
+    for k in range(10):
+        for i in range (9):
+            for j in range(2):
+                img1=label_img[k,i*224:i*224+224,j*224:j*224+224]
+                mask1=label_mask[k,i*224:i*224+224,j*224:j*224+224]
+                if mask1.sum!=0:
+                    valimg[id]=img1
+                    valmask[id]=mask1
+                    id+=1
+    valimg=valimg[:id]
+    valmask=valmask[:id]
 
-
-    val_imgs=np.load("./data/THEBE224/val_img.npy")
+    np.save("./data/valimg.npy",valimg)
+    np.save("./data/valmask.npy",valmask)
+    
+    val_imgs=np.load("./data/valimg.npy")
     
     val_imgs=torch.tensor(val_imgs)
 
-    val_masks=np.load("./data/THEBE224/val_mask.npy")
+    val_masks=np.load("./data/valmask.npy")
     
     val_masks=torch.tensor(val_masks)
 
 
     
-    test_imgs=np.load("./data/THEBE224/test_imgs.npy")
+    test_imgs=np.load("./data/seistest.npy")
     
     test_imgs=torch.tensor(test_imgs)
 
    
-    test_masks=np.load("./data/THEBE224/test_masks.npy")
+    test_masks=np.load("./data/faulttest.npy")
   
     test_masks=torch.tensor(test_masks)
   
