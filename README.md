@@ -4,17 +4,18 @@ This project is the code for paper URAL: Uncertainty-driven Region-based Active 
 The main package and version of the python environment are as follows
 | Name      | Version           |
 |-------------------|---------------------|
-|python             |       3.8.5         |           
-|pytorch            |       1.10.1        |
-|torchvision        |       0.11.2        | 
-|cudatoolkit        |       10.2.89       |
-|cudnn              |       7.6.5         | 
-|matplotlib         |       3.3.2         |   
+|python             |       3.8.18        |           
+|pytorch            |       2.2.0         |
+|torchvision        |       0.17.0        | 
+|matplotlib         |       3.7.5         |   
 |numpy              |       1.19.2        |
-|opencv             |       4.6.0.66      |  
-|pandas             |       1.1.3         |    
-|scikit-learn       |       0.23.2        |     
-|tqdm               |       4.50.2        |
+|opencv             |      4.9.0.80       |  
+|pandas             |       2.0.3         |    
+|scikit-learn       |       1.3.2         |     
+|tqdm               |        4.66.2       |
+|albumentations     |       1.4.18        |
+|cmapy              |       0.6.6         |
+|numpy              |        1.24.4       |
 
 
 The above environment is successful when running the code of the project. Pytorch has very good compatibility. Thus, I suggest that try to use the existing pytorch environment firstly.
