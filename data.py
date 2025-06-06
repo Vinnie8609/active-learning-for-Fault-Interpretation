@@ -94,8 +94,8 @@ def get_THEBE(handler):
     label_mask= selected_masks [:10,100:2148,700:1212]
     unlabel_mask= selected_masks [10:,100:2148,700:1212]
     
-    trainimg=np.zeros([180,224,224)]
-    trainmask=np.zeros([180,224,224)]
+    trainimg=np.zeros([180,224,224])
+    trainmask=np.zeros([180,224,224])
     id=0
     for k in range(10):
         for i in range (9):
@@ -152,8 +152,8 @@ def get_THEBE(handler):
     label_mask= selected_masks [:,100:2148,700:1212]
     
     
-    valimg=np.zeros([180,224,224)]
-    valmask=np.zeros([180,224,224)]
+    valimg=np.zeros([180,224,224])
+    valmask=np.zeros([180,224,224])
     id=0
     for k in range(10):
         for i in range (9):
