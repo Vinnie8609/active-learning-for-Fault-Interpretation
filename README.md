@@ -8,7 +8,6 @@ The main package and version of the python environment are as follows
 |pytorch            |       2.2.0         |
 |torchvision        |       0.17.0        | 
 |matplotlib         |       3.7.5         |   
-|numpy              |       1.19.2        |
 |opencv             |      4.9.0.80       |  
 |pandas             |       2.0.3         |    
 |scikit-learn       |       1.3.2         |     
