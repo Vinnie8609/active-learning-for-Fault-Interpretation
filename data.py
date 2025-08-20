@@ -85,7 +85,7 @@ def get_THEBE(handler):
 
     img=np.load("./data/seistrain.npy")
     mask=np.load("./data/faulttrain.npy")
-    num_frames = train_images.shape[0]
+    num_frames = img.shape[0]
     selected_indices = np.random.choice(num_frames, size=25, replace=False)
     selected_images = img[selected_indices]
     selected_masks = mask[selected_indices]
@@ -144,7 +144,7 @@ def get_THEBE(handler):
 
     img=np.load("./data/seisval.npy")
     mask=np.load("./data/faultval.npy")
-    num_frames = train_images.shape[0]
+    num_frames = img.shape[0]
     selected_indices = np.random.choice(num_frames, size=10, replace=False)
     selected_images = img[selected_indices]
     selected_masks = mask[selected_indices]
