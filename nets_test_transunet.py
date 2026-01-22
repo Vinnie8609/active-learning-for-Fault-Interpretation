@@ -1029,6 +1029,8 @@ class Net:
             con_nums.append(label)
             output_image[labels == label] = np.random.randint(0, 255, 3)
 
+      
+
         # 显示图像
         plt.imshow(output_image)
         plt.axis('off')  # 不显示坐标轴
@@ -1042,27 +1044,28 @@ class Net:
         id=0
         #################按照断层连通性
         for label in range(1, num_labels):
-            fids,sids=np.where(labels==label)
-            # for ids in range(len(fids)):
-            #     maskContour.append((sids[ids],fids[ids]))
-            l=abs(fids[-1]-fids[0])
-            w=abs(sids[-1]-sids[0])
-            pickimg=np.zeros([l,w])
-            pickmask=np.zeros([l,w])
-            pickimg=img_area[min(fids[0],fids[-1]):max(fids[0],fids[-1]),min(sids[0],sids[-1]):max(sids[0],sids[-1])]
-            pickmask=mask_area[min(fids[0],fids[-1]):max(fids[0],fids[-1]),min(sids[0],sids[-1]):max(sids[0],sids[-1])]
-            plt.figure(figsize=(4,4))
-            plt.imshow(pickimg.cpu())
+             patches_img,patches_mask = crop_patches_iterative(img_area,mask_area, label, W, H, max_rounds=3)
+            # fids,sids=np.where(labels==label)
+            # # for ids in range(len(fids)):
+            # #     maskContour.append((sids[ids],fids[ids]))
+            # l=abs(fids[-1]-fids[0])
+            # w=abs(sids[-1]-sids[0])
+            # pickimg=np.zeros([l,w])
+            # pickmask=np.zeros([l,w])
+            # pickimg=img_area[min(fids[0],fids[-1]):max(fids[0],fids[-1]),min(sids[0],sids[-1]):max(sids[0],sids[-1])]
+            # pickmask=mask_area[min(fids[0],fids[-1]):max(fids[0],fids[-1]),min(sids[0],sids[-1]):max(sids[0],sids[-1])]
+            # plt.figure(figsize=(4,4))
+            # plt.imshow(pickimg.cpu())
             
-            plt.savefig("./active_learning_data/{}_{}/{}/pick/split_{}/{}_img.png".format(seed,otherchoice,"EntropySampling",n,label))
+            # plt.savefig("./active_learning_data/{}_{}/{}/pick/split_{}/{}_img.png".format(seed,otherchoice,"EntropySampling",n,label))
 
 
-            plt.figure(figsize=(4,4))
-            plt.imshow(pickmask)
+            # plt.figure(figsize=(4,4))
+            # plt.imshow(pickmask)
         
-            plt.savefig("./active_learning_data/{}_{}/{}/pick/split_{}/{}_mask.png".format(seed,otherchoice,"EntropySampling",n,label))
+            # plt.savefig("./active_learning_data/{}_{}/{}/pick/split_{}/{}_mask.png".format(seed,otherchoice,"EntropySampling",n,label))
 
-            patches_img,patches_mask = crop_patches_iterative(img, components[0], W, H, max_rounds=5)
+           
             
         #     a=fids[0]
         #     b=sids[0]
