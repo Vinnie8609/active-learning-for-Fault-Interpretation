@@ -2049,3 +2049,67 @@ class ConvBlock(nn.Module):
         x = self.relu(self.conv2(x))
         return x
 
+def crop_patches_iterative(img, coords, W, H, max_rounds=3):
+    coords = np.asarray(coords).copy()
+    patches = []
+
+    for _ in range(max_rounds):
+        if len(coords) == 0:
+            break
+
+        rows = coords[:, 0]
+        cols = coords[:, 1]
+
+        left_idx = np.argmin(cols)
+        right_idx = np.argmax(cols)
+        left_point = coords[left_idx]
+        right_point = coords[right_idx]
+
+        if left_point[0] < right_point[0]:
+            cur = left_point
+        else:
+            cur = right_point
+
+        y, x = int(cur[0]), int(cur[1])
+
+        while True:
+            removed = False
+
+            if 0 <= y and y + H <= img.shape[0] and 0 <= x and x + W <= img.shape[1]:
+                patch = img[y:y+H, x:x+W].copy()
+                patches.append(patch)
+
+                in_patch = (
+                    (coords[:, 0] >= y) & (coords[:, 0] < y + H) &
+                    (coords[:, 1] >= x) & (coords[:, 1] < x + W)
+                )
+                if np.any(in_patch):
+                    coords = coords[~in_patch]
+                    removed = True
+                else:
+                    removed = False
+
+            if not removed:
+                break
+
+            # 重新建立 row_to_first
+            rows = coords[:, 0]
+            cols = coords[:, 1]
+            order = np.lexsort((cols, rows))
+            coords_sorted = coords[order]
+            row_to_first = {}
+            for r, c in coords_sorted:
+                if r not in row_to_first:
+                    row_to_first[r] = (r, c)
+
+            # 更新 y'
+            y_next = int(round(y + W / 2))
+            if y_next == y:
+                y_next = y + 1
+
+            if y_next not in row_to_first:
+                break
+
+            y, x = row_to_first[y_next]
+
+    return patches
