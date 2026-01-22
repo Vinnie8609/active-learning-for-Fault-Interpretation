@@ -1061,45 +1061,46 @@ class Net:
             plt.imshow(pickmask)
         
             plt.savefig("./active_learning_data/{}_{}/{}/pick/split_{}/{}_mask.png".format(seed,otherchoice,"EntropySampling",n,label))
-        
+
+            patches_img,patches_mask = crop_patches_iterative(img, components[0], W, H, max_rounds=5)
             
-            a=fids[0]
-            b=sids[0]
+        #     a=fids[0]
+        #     b=sids[0]
             
-            if (sids[-1]-sids[0] )>0:
-                while(1):
-                    # print(a,b)
-                    if a>288 or b>(right-left-224):
-                        break
-                    new_train_imgs_small[id]=torch.tensor(img_area[a:a+224,b:b+224])
-                    new_train_masks_small[id]=torch.tensor(mask_area[a:a+224,b:b+224])
+        #     if (sids[-1]-sids[0] )>0:
+        #         while(1):
+        #             # print(a,b)
+        #             if a>288 or b>(right-left-224):
+        #                 break
+        #             new_train_imgs_small[id]=torch.tensor(img_area[a:a+224,b:b+224])
+        #             new_train_masks_small[id]=torch.tensor(mask_area[a:a+224,b:b+224])
                 
-                    c=np.where(fids==a+56)
-                    if c[0].size==0:
-                        break
-                    else:
-                        a=fids[c[0][0]]
-                        b=sids[c[0][0]]
-                        id+=1
-                        # print(index)
+        #             c=np.where(fids==a+56)
+        #             if c[0].size==0:
+        #                 break
+        #             else:
+        #                 a=fids[c[0][0]]
+        #                 b=sids[c[0][0]]
+        #                 id+=1
+        #                 # print(index)
                    
 
-            else:
-                while(1):
-                    print(a,b)
-                    if a>288 or b<224:
-                        break
-                    new_train_imgs_small[id]=torch.tensor(img_area[a:a+224,b-224:b])
-                    new_train_masks_small[id]=torch.tensor(mask_area[a:a+224,b-224:b])
+        #     else:
+        #         while(1):
+        #             print(a,b)
+        #             if a>288 or b<224:
+        #                 break
+        #             new_train_imgs_small[id]=torch.tensor(img_area[a:a+224,b-224:b])
+        #             new_train_masks_small[id]=torch.tensor(mask_area[a:a+224,b-224:b])
                     
-                    c=np.where(fids==a+56)
-                    if c[0].size==0:
-                        break
-                    else:
-                        a=fids[c[0][0]]
-                        b=sids[c[0][0]]
-                        id+=1
-        print(id)
+        #             c=np.where(fids==a+56)
+        #             if c[0].size==0:
+        #                 break
+        #             else:
+        #                 a=fids[c[0][0]]
+        #                 b=sids[c[0][0]]
+        #                 id+=1
+        # print(id)
         
         #################按照patch
         # for j in range(4):
@@ -2049,9 +2050,10 @@ class ConvBlock(nn.Module):
         x = self.relu(self.conv2(x))
         return x
 
-def crop_patches_iterative(img, coords, W, H, max_rounds=3):
+def crop_patches_iterative(img,mask, coords, W, H, max_rounds=3):
     coords = np.asarray(coords).copy()
-    patches = []
+    patches_img = []
+    patches_mask = []
 
     for _ in range(max_rounds):
         if len(coords) == 0:
@@ -2076,8 +2078,10 @@ def crop_patches_iterative(img, coords, W, H, max_rounds=3):
             removed = False
 
             if 0 <= y and y + H <= img.shape[0] and 0 <= x and x + W <= img.shape[1]:
-                patch = img[y:y+H, x:x+W].copy()
-                patches.append(patch)
+                patchi = img[y:y+H, x:x+W].copy()
+                patches_img.append(patch)
+                patchm = mask[y:y+H, x:x+W].copy()
+                patches_mask.append(patch)
 
                 in_patch = (
                     (coords[:, 0] >= y) & (coords[:, 0] < y + H) &
@@ -2112,4 +2116,4 @@ def crop_patches_iterative(img, coords, W, H, max_rounds=3):
 
             y, x = row_to_first[y_next]
 
-    return patches
+    return patches_img,patches_mask
