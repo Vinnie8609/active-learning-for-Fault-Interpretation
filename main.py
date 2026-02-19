@@ -1,52 +1,32 @@
 import argparse
-import numpy as np
-import torch
-from utils import get_dataset, get_net, get_strategy
-from pprint import pprint
-from common_tools import create_logger 
 import os
 import random
+from pprint import pprint
+
+import numpy as np
+import torch
+
+from common_tools import create_logger
 from model_predict_thebe import model_predict
+from utils import get_dataset, get_net, get_strategy
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--seed', type=int, default=456, help="random seed")    #111111111
-parser.add_argument('--picknum', type=int, default=50, help="random seed")  
-parser.add_argument('--otherchoice', type=str, default="transunt_3", help="number of round pick samples")    #30pices
+parser.add_argument('--seed', type=int, default=123, help="random seed")
+parser.add_argument('--picknum', type=int, default=50, help="random seed")
+parser.add_argument('--otherchoice', type=str, default="transunt_3", help="number of round pick samples")
 parser.add_argument('--n_init_labeled', type=int, default=348, help="number of init labeled samples")
 parser.add_argument('--n_query', type=int, default=50, help="number of queries per round")
 parser.add_argument('--n_round', type=int, default=10, help="number of rounds")
-parser.add_argument('--dataset_name', type=str, default="THEBE", choices=["MNIST", "FashionMNIST", "SVHN", "CIFAR10","THEBE","FAULTSEG"], help="dataset")
-parser.add_argument('--strategy_name', type=str, default="EntropySampling",
-                    choices=["Orderselect",
-                            "RandomSampling", 
-                             "LeastConfidence", 
-                             "MarginSampling", 
-                             "EntropySampling", 
-                             "LeastConfidenceDropout", 
-                             "MarginSamplingDropout", 
-                             "EntropySamplingDropout", 
-                             "KMeansSampling",
-                             "KCenterGreedy", 
-                             "BALDDropout", 
-                             "AdversarialBIM", 
-                             "AdversarialDeepFool"], help="query strategy")
+parser.add_argument('--dataset_name', type=str, default="THEBE", help="dataset")
+parser.add_argument('--strategy_name', type=str, default="EntropySampling", help="query strategy")
 args = parser.parse_args()
 pprint(vars(args))
 print()
  ################创建文件夹
 
 
-if not os.path.exists("./active_learning_data/{}_{}".format(args.seed,args.otherchoice)):
+os.makedirs("./active_learning_data/{}_{}".format(args.seed,args.otherchoice), exist_ok=True)
 
-    os.makedirs("./active_learning_data/{}_{}".format(args.seed,args.otherchoice))
-
-os.makedirs("./active_learning_data/{}_{}/{}".format(args.seed,args.otherchoice,args.strategy_name))
-os.makedirs("./active_learning_data/{}_{}/{}/log".format(args.seed,args.otherchoice,args.strategy_name))
-os.makedirs("./active_learning_data/{}_{}/{}/predick_result".format(args.seed,args.otherchoice,args.strategy_name))
-os.makedirs("./active_learning_data/{}_{}/{}/pick".format(args.seed,args.otherchoice,args.strategy_name))
-os.makedirs("./active_learning_data/{}_{}/{}/picture".format(args.seed,args.otherchoice,args.strategy_name))
-os.makedirs("./active_learning_data/{}_{}/{}/picture/test".format(args.seed,args.otherchoice,args.strategy_name))
-os.makedirs("./active_learning_data/{}_{}/{}/picture/val".format(args.seed,args.otherchoice,args.strategy_name))
 
 logger = create_logger("./active_learning_data/{}_{}/{}/log".format(args.seed,args.otherchoice,args.strategy_name),"main")
 
@@ -77,27 +57,13 @@ net = get_net(args.dataset_name, device)                   # load network
 strategy = get_strategy(args.strategy_name)(dataset, net)  # load strategy
 
 # start experiment
-# dataset.initialize_labels(args.n_init_labeled)
 print(f"number of labeled pool: {args.n_init_labeled}")
-# print(f"number of unlabeled pool: {dataset.n_pool-args.n_init_labeled}")
 print(f"number of testing pool: {dataset.n_test}")
 print()
 
 logger.info(f"number of labeled pool: {args.n_init_labeled}")
-# logger.info(f"number of unlabeled pool: {dataset.n_pool-args.n_init_labeled}")
 logger.info(f"number of testing pool: {dataset.n_test}")
 
-# # round 0 accuracy
-
-
-
-# print("Round 0")
-# logger.info("Round 0")
-# query_idxs = strategy.query(0)
-
-
-best_iou=strategy.train_before(0,args.strategy_name,args.seed,args.otherchoice)  
-# flag=np.ones([15,512,2048],type="bool")
 flag=np.ones([15])
 
 
@@ -109,9 +75,11 @@ for rd in range(1, args.n_round+1):
     logger.info(f"Round {rd}")
 
     # query
-    flag_update = strategy.query(rd,args.seed,args.otherchoice,args.picknum,args.picknum_no,flag)#n_query 10 
-    flag=flag_update 
-    # strategy.update(query_idxs)
+    if args.strategy_name == "EntropySampling":
+        flag_update = strategy.query(rd, args.seed, args.otherchoice, flag)
+    else:
+        flag_update = strategy.query(rd, args.seed, args.otherchoice, args.picknum, flag)
+    flag=flag_update
     a=strategy.train(rd,args.strategy_name,best_iou,args.seed,args.otherchoice)
    
     best_iou=a

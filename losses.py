@@ -1,14 +1,10 @@
+import numpy as np
 import torch
-from torch.nn import functional as F
-import numpy as np
 import torch.nn as nn
-from torch.autograd import Variable
-
-import numpy as np
-# from metrics import dice_coef
-# from metrics import dice
-from collections import OrderedDict
 import warnings
+from collections import OrderedDict
+from torch.autograd import Variable
+from torch.nn import functional as F
 warnings.filterwarnings("ignore")
 
 
@@ -712,7 +708,6 @@ class MocoLoss_list(torch.nn.Module):
             l_neg = F.cosine_similarity(feat_q[:,None,:], feat_k[None,:,:], dim=-1)
         else:            
             queue_tensor = torch.cat(self.queue,dim = 0)
-            print(queue_tensor.size())
             l_neg = F.cosine_similarity(feat_q[:,None,:], queue_tensor.reshape(-1,feat_q.size(1))[None,:,:], dim=-1)
 
         out = torch.cat((l_pos, l_neg), dim=1) / self.temperature  #batch_size * (K+1)

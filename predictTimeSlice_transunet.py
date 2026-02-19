@@ -1,8 +1,8 @@
-from image_tools import *
 import os
+
 import torchvision.transforms.functional as TF
-from nets_copy import  THEBE_Net
-from configs.config import get_config
+
+from image_tools import *
 from TransUnet import VisionTransformer
 import TransUnet_vit_seg_configs as configs
 
@@ -77,11 +77,7 @@ def predict_slice(model_name,seis,strategy_name,seed,otherchoice):
     test_predictions = []
     imageNo = -1
     mergemethod = "smooth"
-    # model=create_model_thebe(model_name)
-    # cfg = get_config()
-    # imgsize = 224
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # model=THEBE_Net(cfg,imgsize).to(device)
 
     vit_name="R50-ViT-B_16"
     img_size=224
@@ -92,7 +88,7 @@ def predict_slice(model_name,seis,strategy_name,seed,otherchoice):
             int(img_size / vit_patches_size), int(img_size / vit_patches_size))
     model=VisionTransformer(config_vit).to(device)
 
-    model_nestunet_path = "F:/active learning/active_learning_data/{}_{}/{}/SSL_checkpoint_best.pkl".format(seed,otherchoice,strategy_name)
+    model_nestunet_path = "./active_learning_data/{}_{}/{}/SSL_checkpoint_best.pkl".format(seed,otherchoice,strategy_name).format(seed,otherchoice,strategy_name)
     
    
     weights = torch.load(model_nestunet_path, map_location="cuda")['model_state_dict']

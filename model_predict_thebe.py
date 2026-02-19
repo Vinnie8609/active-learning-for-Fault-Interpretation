@@ -1,23 +1,22 @@
 
-import torchvision.transforms.functional as TF
-import torch.utils.data
-from image_tools import *
-# from predictTimeSlice import *
-from predictTimeSlice_transunet import *
-# from utils.model_utils import *
-from common_tools import create_logger 
-import torch.utils.data
-import time
+import argparse
 import random
-# from nets_copy import  THEBE_Net
+import time
+
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+
+from common_tools import create_logger
+from image_tools import *
+from predictTimeSlice_transunet import *
 from evalution_segmentaion import Evaluator
 
 batch_size = 32
 
-import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--seed', type=int, default=456, help="random seed")    #111111111
-parser.add_argument('--otherchoice', type=str, default="transunt_3", help="number of round pick samples")    #30pices
+parser.add_argument('--seed', type=int, default=456, help="random seed")
+parser.add_argument('--otherchoice', type=str, default="transunt_3", help="number of round pick samples")
 parser.add_argument('--strategy_name', type=str, default="EntropySampling",
                     choices=["Orderselect",
                             "RandomSampling", 
@@ -46,21 +45,19 @@ setup_seed(args.seed)
 torch.backends.cudnn.enabled = False
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-strategy_name=   args.strategy_name
-seed=args.seed
-otherchoice=args.otherchoice
+strategy_name = args.strategy_name
+seed = args.seed
+otherchoice = args.otherchoice
 
 def model_predict(rd):
-    # main()
     logger = create_logger("./active_learning_data/{}_{}/{}/log".format(seed,otherchoice,strategy_name),"predict_{}".format(rd))
-        
     seis = np.load("./data/THEBE_NEW/test_img_all.npy")
     
     t1 = time.time()
     for i in range(len(seis)):
 
        
-        recover_Y_test_pred=predict_slice(THEBE_Net, seis[i],strategy_name,seed,otherchoice)     #512,2048,1
+        recover_Y_test_pred=predict_slice(THEBE_Net, seis[i],strategy_name,seed,otherchoice)
         np.save("./active_learning_data/{}_{}/{}/predick_result/{}.npy".format(seed,otherchoice,strategy_name,i),
                 np.squeeze(recover_Y_test_pred))
 
@@ -81,8 +78,6 @@ def model_predict(rd):
             predicted_mask=np.load("./active_learning_data/{}_{}/{}/predick_result/{}.npy".format(seed,otherchoice,strategy_name,i))
             predicted_mask= predicted_mask>0.5
             img1=predicted_mask
-            # print("1")
-            # if i%20==0:       
             plt.figure(figsize=(4,4))
             plt.imshow(img1)
             
@@ -96,7 +91,6 @@ def model_predict(rd):
             plt.savefig("./active_learning_data/{}_{}/{}/picture/test/{}_maskS.png".format(seed,otherchoice,strategy_name,i))
                 
                 
-            # miou.add_batch(np.array(fault[i]), np.array(predicted_mask))
             miou.add_batch(fault[i].astype(int), predicted_mask.astype(int))
             accVal += miou.Pixel_Accuracy()
             miouVal += miou.Mean_Intersection_over_Union()
@@ -114,9 +108,6 @@ def model_predict(rd):
     mRecall= mRecall * 100 / num
     mRecall = ('%.2f' % mRecall)
     logger.info('round{}:  all acc:{} , miou:{}  , Precious:{}  ,Recall:{}   ,F1 :{} '.format(rd,accVal,miouVal, mPrecious,mRecall,mF1))
-
-#/home/user/data/liuyue/active_learning_data/123_unet_maxarea_2/EntropySampling/SSL_checkpoint_best0.2651236355304718.pkl
-
 
 if __name__ == '__main__':
      rd=0
