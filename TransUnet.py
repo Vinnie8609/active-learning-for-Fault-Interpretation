@@ -464,7 +464,3 @@ if __name__ == '__main__':
     x=torch.randn(3,1,224,224)
     y=model(x)
     print(y.shape)
-    # ops, params = get_model_complexity_info(model, (1, 224, 224), as_strings=True, print_per_layer_stat=True,
-    #                                         verbose=True)
-
-    # print(ops, params)

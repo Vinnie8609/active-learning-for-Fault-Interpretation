@@ -1,17 +1,11 @@
-import torch
 import cv2
-from albumentations import *
 import numpy as np
-from itertools import compress, product
+import scipy.signal
+import torch
+from albumentations import *
+from itertools import product
 from skimage.util.shape import view_as_windows
 from typing import Tuple
-import scipy.signal
-
-import numpy as np
-
-
-
-
 def norm(original):# normalize to [0,1]
     d_min=original.min()
     if d_min<0:
@@ -29,42 +23,20 @@ def augument(p=0.5):
         HorizontalFlip(p=p),
         VerticalFlip(p=p),
     ]),
-    #1
-    # OneOf([
-    #     Sharpen(p=p),
-    #     # Emboss(p=1),
-    #     Blur(p=p)
-    # ], p=p),
-        #2
-    # ShiftScaleRotate(shift_limit=0.2, scale_limit=0.2, rotate_limit=30,interpolation=cv2.INTER_LINEAR, border_mode=cv2.BORDER_CONSTANT, p=0.5),
-
     ])
 def faultseg_augumentation(p=1):
     return Compose([
-    # OneOf([
-    #     HorizontalFlip(p=p),
-    #     VerticalFlip(p=p),
-    #     Compose([VerticalFlip(p=p), HorizontalFlip(p=p)]),
-    # ]),######################################
-    #1
     OneOf([
         Sharpen(p=p),
-        # Emboss(p=1),
         Blur(p=p)
     ], p=p),
-        #2
-    # ShiftScaleRotate(shift_limit=0.2, scale_limit=0.2, rotate_limit=30,interpolation=cv2.INTER_LINEAR, border_mode=cv2.BORDER_CONSTANT, p=0.5),
-   # 3
     OneOf([
-        # RandomBrightnessContrast(p=1),
         ElasticTransform(p=p, alpha=400, sigma=400 * 0.05, alpha_affine=400 * 0.03),
         GridDistortion(p=p),
         OpticalDistortion(p=p)
     ],p=p)
     ])
 def strongaug(seismic,fault):
-
-    # array = np.random.randint(0,2,5)
 
     aug = VerticalFlip(p=1)
     augmented = aug(image=seismic, mask=fault)
@@ -167,17 +139,14 @@ def split_Image(bigImage, isMask, top_pad, bottom_pad, left_pad, right_pad, spli
     return splits  # return list of arrays.
 
 
-# idea from https://github.com/dovahcrow/patchify.py
 def recover_Image(patches: np.ndarray, imsize: Tuple[int, int, int], left_pad, right_pad, top_pad, bottom_pad,
                   overlapsize):
-    #     patches = np.squeeze(patches)
     assert len(patches.shape) == 5
 
     i_h, i_w, i_chan = imsize
     image = np.zeros((i_h + top_pad + bottom_pad, i_w + left_pad + right_pad, i_chan), dtype=patches.dtype)
     divisor = np.zeros((i_h + top_pad + bottom_pad, i_w + left_pad + right_pad, i_chan), dtype=patches.dtype)
 
-    #     print("i_h, i_w, i_chan",i_h, i_w, i_chan)
     n_h, n_w, p_h, p_w, _ = patches.shape
 
     o_w = overlapsize

@@ -38,15 +38,12 @@ def resize(img,size,fill=0,method='padding'):
         left_img=img[:diff_x // 2]
         right=diff_x - diff_x // 2
         right_img=img[-right:]
-        print(left_img.shape,right_img.shape)
         img=torch.concat([left_img,img,right_img],dim=0)
         up_img = img[:, :diff_y // 2]
         down = diff_y - diff_y // 2
         down_img = img[:, -down:]
-        print("111  ",up_img.shape,img.shape,down_img.shape)
         img=torch.concat([up_img,img,down_img],dim=1)
         img=img.unsqueeze(0)
-        print(img.shape)
     elif method=='hybrid':
         # step1:插值到180
         _,w,h=img.shape
@@ -311,6 +308,4 @@ def adjust_learning_rate(optimizer, epoch, args, multiple):
 
 
 if __name__ == "__main__":
-
     setup_seed(2)
-    print(np.random.randint(0, 10, 1))
